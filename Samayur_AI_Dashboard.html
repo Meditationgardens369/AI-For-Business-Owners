@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samayur — A Quiet Demonstration for Dr. Veena</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: { 50:'#fbf7f0', 100:'#f3ead8', 200:'#e2d3b0', 300:'#c9b384', 400:'#9d8355', 500:'#6f5a3a', 600:'#4e3f2a', 700:'#35291c', 800:'#221a12', 900:'#15100a', 950:'#0d0906' },
+                        moss: { 50:'#f1f4ec', 100:'#dde5cd', 200:'#c2cfa6', 300:'#a3b580', 400:'#839861', 500:'#647a48', 600:'#4d5f38', 700:'#3a4a2c', 800:'#28341e', 900:'#1a2213' },
+                        saffron: { 50:'#fdf4e8', 100:'#f8debd', 200:'#efbe7e', 300:'#e2994a', 400:'#c97a2a', 500:'#a55e1e', 600:'#7e461a', 700:'#5b3315', 800:'#3e230f', 900:'#261509' },
+                        cream: { 50:'#fdfaf2', 100:'#f7f0dd', 200:'#ede2c3' }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"','Georgia','serif'],
+                        sans: ['Inter','system-ui','sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .serif { font-family: 'Cormorant Garamond', serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0d0906; }
+        ::-webkit-scrollbar-thumb { background: #4d5f38; border-radius: 3px; }
+
+        .glass { background: rgba(253,250,242,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(253,250,242,0.07); }
+        .glass-warm { background: linear-gradient(135deg, rgba(163,181,128,0.06), rgba(226,153,74,0.04)); backdrop-filter: blur(16px); border: 1px solid rgba(253,250,242,0.08); }
+
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes breathe { 0%,100% { transform:scale(1); opacity:0.9; } 50% { transform:scale(1.04); opacity:1; } }
+        @keyframes pulse-dot { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
+        @keyframes shimmer { 0%{background-position:-200% 0;} 100%{background-position:200% 0;} }
+        @keyframes drift { 0%,100%{transform:translate(0,0);} 50%{transform:translate(8px,-6px);} }
+
+        .fade-up { animation: fadeUp 0.7s ease-out forwards; }
+        .breathe { animation: breathe 5s ease-in-out infinite; }
+        .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+        .drift { animation: drift 9s ease-in-out infinite; }
+        .s1 { animation-delay: 0.1s; } .s2 { animation-delay: 0.2s; } .s3 { animation-delay: 0.3s; } .s4 { animation-delay: 0.4s; } .s5 { animation-delay: 0.5s; }
+
+        .nav-item { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); border-left: 3px solid transparent; }
+        .nav-item:hover { background: rgba(163,181,128,0.05); }
+        .nav-item.active { border-left-color: #c9b384; background: rgba(201,179,132,0.06); }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeUp 0.5s ease-out; }
+
+        .card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+
+        .slider { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; background: linear-gradient(to right, #647a48 0%, #647a48 var(--v,50%), #221a12 var(--v,50%), #221a12 100%); outline:none; }
+        .slider::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#c9b384; cursor:pointer; box-shadow:0 0 12px rgba(201,179,132,0.5); transition: transform 0.15s; }
+        .slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        /* Chat */
+        .chat-wrap { background: radial-gradient(ellipse at top, rgba(100,122,72,0.08), transparent 60%), #0d0906; border: 1px solid rgba(253,250,242,0.08); }
+        .bubble-bot { background: linear-gradient(135deg, rgba(163,181,128,0.12), rgba(100,122,72,0.06)); border:1px solid rgba(163,181,128,0.18); }
+        .bubble-user { background: linear-gradient(135deg, rgba(226,153,74,0.14), rgba(197,141,66,0.08)); border:1px solid rgba(226,153,74,0.2); }
+        .typing span { display:inline-block; width:6px; height:6px; margin:0 1px; background:#a3b580; border-radius:50%; animation: pulse-dot 1.4s infinite; }
+        .typing span:nth-child(2){animation-delay:0.2s;}
+        .typing span:nth-child(3){animation-delay:0.4s;}
+
+        .prompt-chip { transition: all 0.2s ease; cursor: pointer; }
+        .prompt-chip:hover { background: rgba(163,181,128,0.15); border-color: rgba(163,181,128,0.4); transform: translateY(-1px); }
+
+        .lotus { width:44px; height:44px; background: radial-gradient(circle, #c9b384 0%, #7e461a 80%); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-weight:600; color:#15100a; }
+
+        .tag { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:9999px; font-size:0.65rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; }
+
+        .divider { height:1px; background: linear-gradient(to right, transparent, rgba(201,179,132,0.3), transparent); }
+
+        .number-display { background: linear-gradient(135deg, #c9b384, #e2994a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .phone-frame { background: #0d0906; border: 10px solid #221a12; border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body class="bg-ink-950 text-ink-100 min-h-screen">
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <nav class="w-72 bg-ink-900/60 border-r border-white/5 flex flex-col fixed h-full z-50">
+        <div class="p-6 border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="lotus breathe">S</div>
+                <div>
+                    <div class="serif text-2xl font-semibold tracking-tight text-cream-50 leading-none">Samayur</div>
+                    <div class="text-[10px] uppercase tracking-[0.25em] text-ink-300 font-semibold mt-1">For Dr. Veena</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 py-5 px-3 space-y-0.5 overflow-y-auto">
+            <button onclick="show('welcome')" class="nav-item active w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="welcome">
+                <span class="text-base">&#10047;</span>
+                <div>
+                    <div class="font-medium text-cream-50">A Quiet Welcome</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">What you're about to see</div>
+                </div>
+            </button>
+            <button onclick="show('understanding')" class="nav-item w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="understanding">
+                <span class="text-base">&#127774;</span>
+                <div>
+                    <div class="font-medium text-cream-50">Your Practice</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">What we understood</div>
+                </div>
+            </button>
+            <button onclick="show('assistant')" class="nav-item w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="assistant">
+                <span class="text-base">&#9775;</span>
+                <div>
+                    <div class="font-medium text-cream-50">The Assistant</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">Try it live</div>
+                </div>
+            </button>
+            <button onclick="show('qualification')" class="nav-item w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="qualification">
+                <span class="text-base">&#10049;</span>
+                <div>
+                    <div class="font-medium text-cream-50">Smart Filtering</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">Who reaches you</div>
+                </div>
+            </button>
+            <button onclick="show('time')" class="nav-item w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="time">
+                <span class="text-base">&#8986;</span>
+                <div>
+                    <div class="font-medium text-cream-50">Time Returned</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">What you gain back</div>
+                </div>
+            </button>
+            <button onclick="show('connection')" class="nav-item w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="connection">
+                <span class="text-base">&#10086;</span>
+                <div>
+                    <div class="font-medium text-cream-50">Staying Connected</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">Nurture &amp; follow-up</div>
+                </div>
+            </button>
+            <button onclick="show('voice')" class="nav-item w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="voice">
+                <span class="text-base">&#9835;</span>
+                <div>
+                    <div class="font-medium text-cream-50">Your Voice, Multiplied</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">Content from you</div>
+                </div>
+            </button>
+            <button onclick="show('prototype')" class="nav-item w-full text-left px-4 py-3 rounded-r-lg flex items-center gap-3 text-sm" data-s="prototype">
+                <span class="text-base">&#10022;</span>
+                <div>
+                    <div class="font-medium text-cream-50">Where We'd Start</div>
+                    <div class="text-[10px] text-ink-300 mt-0.5">The first prototype</div>
+                </div>
+            </button>
+        </div>
+
+        <div class="p-4 border-t border-white/5">
+            <div class="glass-warm rounded-xl p-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-2 h-2 rounded-full bg-moss-300 pulse-dot"></div>
+                    <span class="text-[10px] uppercase tracking-widest text-ink-200 font-semibold">Built with care</span>
+                </div>
+                <div class="text-[11px] text-ink-300 leading-relaxed">A private demonstration for<br><strong class="text-cream-50 serif text-base">Dr. Veena Balkrishna Fernandes</strong></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="ml-72 flex-1 min-h-screen">
+        <header class="sticky top-0 z-40 bg-ink-950/85 backdrop-blur-xl border-b border-white/5 px-10 py-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="serif text-2xl font-semibold text-cream-50" id="stitle">A Quiet Welcome</h1>
+                    <p class="text-xs text-ink-300 mt-0.5" id="ssub">A demonstration prepared with care, for you</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="glass rounded-full px-4 py-1.5 flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-moss-300 pulse-dot"></div>
+                        <span class="text-[11px] font-medium text-ink-200">Lisbon · Porto · Algarve</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-10 max-w-6xl">
+
+            <!-- ═══════════ SECTION: WELCOME ═══════════ -->
+            <section id="s-welcome" class="section active">
+                <div class="glass-warm rounded-3xl p-10 mb-6 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-saffron-300/5 blur-3xl drift"></div>
+                    <div class="relative z-10 max-w-3xl">
+                        <div class="tag bg-saffron-300/10 text-saffron-200 border border-saffron-300/20 mb-6">A private demonstration</div>
+                        <h2 class="serif text-5xl font-light text-cream-50 leading-[1.15] mb-6">For Dr. Veena — a quiet look at what could be, built around your practice.</h2>
+                        <p class="text-ink-200 leading-relaxed text-lg font-light mb-6">This isn't a product pitch. It's a small demonstration of how the first layer of conversation with new clients could happen <em class="text-cream-50">before</em> it reaches you — in your voice, with your values, and without taking more of your time.</p>
+                        <p class="text-ink-300 leading-relaxed">Scroll through at your own pace. Everything here is designed to be felt in under five minutes. There's a live chat you can try, a few small visualizations, and at the end, a simple suggestion for where we'd begin.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-5 mb-6">
+                    <div class="card glass rounded-2xl p-6 fade-up">
+                        <div class="text-2xl mb-3 text-saffron-300">&#10047;</div>
+                        <div class="text-[10px] uppercase tracking-widest text-ink-300 mb-2">What this protects</div>
+                        <div class="serif text-2xl text-cream-50 font-light leading-tight">Your time.<br>Your energy.<br>Your presence.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-6 fade-up s1">
+                        <div class="text-2xl mb-3 text-moss-300">&#10049;</div>
+                        <div class="text-[10px] uppercase tracking-widest text-ink-300 mb-2">What it handles</div>
+                        <div class="serif text-2xl text-cream-50 font-light leading-tight">First questions.<br>Basic orientation.<br>Early qualification.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-6 fade-up s2">
+                        <div class="text-2xl mb-3 text-saffron-200">&#10086;</div>
+                        <div class="text-[10px] uppercase tracking-widest text-ink-300 mb-2">What reaches you</div>
+                        <div class="serif text-2xl text-cream-50 font-light leading-tight">Only the people<br>who are ready,<br>and right.</div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-8 border-l-2 border-saffron-300/40">
+                    <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-3">The simple idea</div>
+                    <p class="serif text-2xl text-cream-50 font-light leading-snug italic">"What if the first conversation with every new client could happen with the same care you would give — but without needing to be you?"</p>
+                </div>
+
+                <div class="mt-10 flex items-center justify-between glass rounded-xl p-5">
+                    <div class="text-xs text-ink-300">Begin the walkthrough</div>
+                    <button onclick="show('understanding')" class="bg-moss-600 hover:bg-moss-500 text-cream-50 px-5 py-2 rounded-lg text-sm font-medium transition">Continue &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ═══════════ SECTION: UNDERSTANDING ═══════════ -->
+            <section id="s-understanding" class="section">
+                <div class="glass-warm rounded-3xl p-8 mb-6">
+                    <div class="tag bg-moss-400/10 text-moss-200 border border-moss-400/20 mb-4">What we understood about you</div>
+                    <h2 class="serif text-4xl font-light text-cream-50 leading-tight mb-4">Before we designed anything, we studied your work.</h2>
+                    <p class="text-ink-200 leading-relaxed max-w-3xl">Your training, your philosophy, the way you speak about food and digestion, your clinical depth, and the kinds of people who find their way to Samayur. Below is what shaped every decision in this demonstration.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-5 mb-6">
+                    <div class="card glass rounded-2xl p-6">
+                        <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-3">Your clinical authority</div>
+                        <h3 class="serif text-2xl text-cream-50 mb-3">Not a wellness coach. A clinician.</h3>
+                        <ul class="space-y-2 text-sm text-ink-200 leading-relaxed">
+                            <li class="flex gap-2"><span class="text-moss-300">&bull;</span> BAMS &mdash; Gujarat Ayurved University, Jamnagar</li>
+                            <li class="flex gap-2"><span class="text-moss-300">&bull;</span> Clinical residency at Shree Gulabkunverba Ayurved Hospital</li>
+                            <li class="flex gap-2"><span class="text-moss-300">&bull;</span> Specialized Panchakarma training, Sidheshwari Institute</li>
+                            <li class="flex gap-2"><span class="text-moss-300">&bull;</span> Recovery Massage certification &mdash; Portugal</li>
+                        </ul>
+                        <p class="text-xs text-ink-300 mt-4 italic">This is what the assistant must reflect. Not wellness language. Medical credibility with warmth.</p>
+                    </div>
+
+                    <div class="card glass rounded-2xl p-6">
+                        <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-3">Your philosophy</div>
+                        <h3 class="serif text-2xl text-cream-50 mb-3">"We are what we eat and digest."</h3>
+                        <p class="text-sm text-ink-200 leading-relaxed mb-3">Ayurveda as a living tradition, not a diet. The five elements. <em>Prakriti</em>, <em>Agni</em>, and the mind-body as one system.</p>
+                        <p class="text-sm text-ink-200 leading-relaxed">Root causes before symptoms. Lifestyle before prescription. The person before the protocol.</p>
+                        <p class="text-xs text-ink-300 mt-4 italic">Every assistant response carries this tone — calm, grounded, never clinical-cold.</p>
+                    </div>
+                </div>
+
+                <div class="text-[10px] uppercase tracking-widest text-ink-300 font-semibold mb-4 flex items-center gap-3">
+                    <div class="h-px flex-1 bg-ink-300/20"></div><span>The four people who find you</span><div class="h-px flex-1 bg-ink-300/20"></div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="card glass rounded-2xl p-5 fade-up">
+                        <div class="text-2xl mb-2">&#9792;</div>
+                        <div class="serif text-xl text-cream-50 mb-2">Women's Health</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Ovarian cysts, candidiasis, hormonal imbalance. Often underserved by conventional care.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5 fade-up s1">
+                        <div class="text-2xl mb-2">&#9774;</div>
+                        <div class="serif text-xl text-cream-50 mb-2">Digestive &amp; Metabolic</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Reflux, bloating, chronic dependence on pantoprazole. Looking for autonomy.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5 fade-up s2">
+                        <div class="text-2xl mb-2">&#9827;</div>
+                        <div class="serif text-xl text-cream-50 mb-2">Parents &amp; Caregivers</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Urgent concerns about children. Need reassurance and practical guidance now.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5 fade-up s3">
+                        <div class="text-2xl mb-2">&#9906;</div>
+                        <div class="serif text-xl text-cream-50 mb-2">Holistic Seekers</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Curious about Ayurveda but uncertain. Need education before commitment.</div>
+                    </div>
+                </div>
+
+                <div class="text-[10px] uppercase tracking-widest text-ink-300 font-semibold mb-4 flex items-center gap-3">
+                    <div class="h-px flex-1 bg-ink-300/20"></div><span>Your five locations</span><div class="h-px flex-1 bg-ink-300/20"></div>
+                </div>
+
+                <div class="grid grid-cols-5 gap-3 mb-6">
+                    <div class="card glass rounded-xl p-4 text-center"><div class="serif text-lg text-cream-50">Lisbon</div><div class="text-[10px] text-ink-300 mt-1">BeHaus</div></div>
+                    <div class="card glass rounded-xl p-4 text-center"><div class="serif text-lg text-cream-50">Porto</div><div class="text-[10px] text-ink-300 mt-1">Antero de Quental</div></div>
+                    <div class="card glass rounded-xl p-4 text-center"><div class="serif text-lg text-cream-50">Portim&atilde;o</div><div class="text-[10px] text-ink-300 mt-1">HUB Ativo</div></div>
+                    <div class="card glass rounded-xl p-4 text-center"><div class="serif text-lg text-cream-50">Almancil</div><div class="text-[10px] text-ink-300 mt-1">Clarity</div></div>
+                    <div class="card glass rounded-xl p-4 text-center"><div class="serif text-lg text-cream-50">Monchique</div><div class="text-[10px] text-ink-300 mt-1">Retreats</div></div>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border-l-2 border-saffron-300/40">
+                    <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-2">The quiet truth</div>
+                    <p class="serif text-xl text-cream-50 font-light italic leading-snug">Right now, every one of these people begins their journey with you personally. That's generous — and it is also a ceiling.</p>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="show('assistant')" class="bg-moss-600 hover:bg-moss-500 text-cream-50 px-5 py-2 rounded-lg text-sm font-medium transition">See it in action &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ═══════════ SECTION: ASSISTANT (LIVE CHAT) ═══════════ -->
+            <section id="s-assistant" class="section">
+                <div class="glass-warm rounded-3xl p-8 mb-6">
+                    <div class="tag bg-saffron-300/10 text-saffron-200 border border-saffron-300/20 mb-4">Live demonstration &mdash; try it</div>
+                    <h2 class="serif text-4xl font-light text-cream-50 leading-tight mb-4">Speak to the assistant as if you were a new client.</h2>
+                    <p class="text-ink-200 leading-relaxed max-w-3xl">Click one of the suggested concerns below, or type your own. This is a working prototype — it responds in real time, in the voice and tone we designed for Samayur.</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Chat -->
+                    <div class="col-span-2 chat-wrap rounded-3xl overflow-hidden flex flex-col" style="height:620px;">
+                        <div class="px-5 py-4 border-b border-white/5 flex items-center gap-3 bg-ink-900/50">
+                            <div class="lotus" style="width:36px;height:36px;font-size:14px;">S</div>
+                            <div class="flex-1">
+                                <div class="text-sm text-cream-50 font-medium">Samayur &mdash; Practice Assistant</div>
+                                <div class="text-[10px] text-moss-300 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-moss-300 pulse-dot"></span> Available now</div>
+                            </div>
+                            <button onclick="resetChat()" class="text-[10px] text-ink-300 hover:text-cream-50 transition px-3 py-1 rounded-full border border-white/10">Restart</button>
+                        </div>
+
+                        <div id="chatBody" class="flex-1 overflow-y-auto p-5 space-y-3"></div>
+
+                        <div class="px-5 py-3 border-t border-white/5 bg-ink-900/40">
+                            <div id="chips" class="flex flex-wrap gap-2 mb-3"></div>
+                            <div class="flex gap-2">
+                                <input id="chatInput" type="text" placeholder="Type your message..." class="flex-1 bg-ink-900/80 border border-white/10 rounded-full px-4 py-2 text-sm text-cream-50 placeholder:text-ink-400 focus:outline-none focus:border-moss-400/40"/>
+                                <button onclick="sendUser()" class="bg-saffron-400 hover:bg-saffron-300 text-ink-900 px-5 py-2 rounded-full text-sm font-semibold transition">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side: What you'd receive -->
+                    <div class="space-y-4">
+                        <div class="glass rounded-2xl p-5">
+                            <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-3">What you would see</div>
+                            <p class="text-xs text-ink-200 leading-relaxed">After every conversation, a quiet summary arrives — by email or WhatsApp — with everything you need to know before opening the patient's file.</p>
+                        </div>
+
+                        <div id="leadCard" class="glass rounded-2xl p-5 opacity-40 transition">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-2 h-2 rounded-full bg-ink-400" id="leadDot"></div>
+                                <div class="text-[10px] uppercase tracking-widest text-ink-300" id="leadStatus">Awaiting conversation</div>
+                            </div>
+                            <div id="leadContent">
+                                <div class="text-xs text-ink-400 italic">Start or complete the chat to see the summary the assistant would send you.</div>
+                            </div>
+                        </div>
+
+                        <div class="glass rounded-2xl p-5">
+                            <div class="text-[10px] uppercase tracking-widest text-moss-300 font-semibold mb-2">Notice</div>
+                            <ul class="text-xs text-ink-200 space-y-2 leading-relaxed">
+                                <li class="flex gap-2"><span class="text-saffron-300">&bull;</span> The tone &mdash; never robotic, never salesy</li>
+                                <li class="flex gap-2"><span class="text-saffron-300">&bull;</span> The questions &mdash; clinically informed, not generic</li>
+                                <li class="flex gap-2"><span class="text-saffron-300">&bull;</span> The pace &mdash; calm, unhurried, respectful</li>
+                                <li class="flex gap-2"><span class="text-saffron-300">&bull;</span> The close &mdash; a clear next step, without pressure</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="show('qualification')" class="bg-moss-600 hover:bg-moss-500 text-cream-50 px-5 py-2 rounded-lg text-sm font-medium transition">How it filters &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ═══════════ SECTION: QUALIFICATION ═══════════ -->
+            <section id="s-qualification" class="section">
+                <div class="glass-warm rounded-3xl p-8 mb-6">
+                    <div class="tag bg-moss-400/10 text-moss-200 border border-moss-400/20 mb-4">Who reaches you &mdash; and who doesn't yet</div>
+                    <h2 class="serif text-4xl font-light text-cream-50 leading-tight mb-4">Only the people who are ready, and right.</h2>
+                    <p class="text-ink-200 leading-relaxed max-w-3xl">Not every person who writes in is ready to book today. Some are curious. Some are early. Some are in the wrong place entirely. The assistant can sense the difference — gently — and route each conversation to the right outcome.</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-5 mb-8">
+                    <div class="card glass rounded-2xl p-6 border-l-2 border-moss-400">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 rounded-full bg-moss-300 pulse-dot"></div>
+                            <div class="text-[10px] uppercase tracking-widest text-moss-300 font-semibold">Ready &mdash; reaches you</div>
+                        </div>
+                        <div class="serif text-2xl text-cream-50 mb-3">High readiness</div>
+                        <ul class="text-xs text-ink-200 space-y-2 leading-relaxed">
+                            <li class="flex gap-2"><span class="text-moss-300">&#10003;</span> Chronic concern, 3+ months</li>
+                            <li class="flex gap-2"><span class="text-moss-300">&#10003;</span> Has tried other approaches</li>
+                            <li class="flex gap-2"><span class="text-moss-300">&#10003;</span> Significant life impact</li>
+                            <li class="flex gap-2"><span class="text-moss-300">&#10003;</span> Location / format confirmed</li>
+                        </ul>
+                        <div class="divider my-4"></div>
+                        <div class="text-[10px] uppercase tracking-widest text-ink-300 mb-1">Outcome</div>
+                        <div class="text-sm text-cream-50">Booking link &mdash; consultation secured.</div>
+                    </div>
+
+                    <div class="card glass rounded-2xl p-6 border-l-2 border-saffron-300">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 rounded-full bg-saffron-300 pulse-dot"></div>
+                            <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold">Warming &mdash; nurtured</div>
+                        </div>
+                        <div class="serif text-2xl text-cream-50 mb-3">Exploring still</div>
+                        <ul class="text-xs text-ink-200 space-y-2 leading-relaxed">
+                            <li class="flex gap-2"><span class="text-saffron-300">&#8226;</span> Curious but hesitant</li>
+                            <li class="flex gap-2"><span class="text-saffron-300">&#8226;</span> Mild or vague concerns</li>
+                            <li class="flex gap-2"><span class="text-saffron-300">&#8226;</span> Needs education first</li>
+                            <li class="flex gap-2"><span class="text-saffron-300">&#8226;</span> Price-sensitive or early</li>
+                        </ul>
+                        <div class="divider my-4"></div>
+                        <div class="text-[10px] uppercase tracking-widest text-ink-300 mb-1">Outcome</div>
+                        <div class="text-sm text-cream-50">Educational guide, dosha quiz, or workshop invite. Kept warm until ready.</div>
+                    </div>
+
+                    <div class="card glass rounded-2xl p-6 border-l-2 border-ink-400">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 rounded-full bg-ink-400"></div>
+                            <div class="text-[10px] uppercase tracking-widest text-ink-300 font-semibold">Redirected &mdash; with care</div>
+                        </div>
+                        <div class="serif text-2xl text-cream-50 mb-3">Not the right fit</div>
+                        <ul class="text-xs text-ink-200 space-y-2 leading-relaxed">
+                            <li class="flex gap-2"><span class="text-ink-400">&#8226;</span> Acute medical emergency</li>
+                            <li class="flex gap-2"><span class="text-ink-400">&#8226;</span> Needs different specialty</li>
+                            <li class="flex gap-2"><span class="text-ink-400">&#8226;</span> Seeking free advice only</li>
+                            <li class="flex gap-2"><span class="text-ink-400">&#8226;</span> Outside scope of practice</li>
+                        </ul>
+                        <div class="divider my-4"></div>
+                        <div class="text-[10px] uppercase tracking-widest text-ink-300 mb-1">Outcome</div>
+                        <div class="text-sm text-cream-50">Honest, gentle redirect. Your name protected, time preserved.</div>
+                    </div>
+                </div>
+
+                <div class="text-[10px] uppercase tracking-widest text-ink-300 font-semibold mb-4 flex items-center gap-3">
+                    <div class="h-px flex-1 bg-ink-300/20"></div><span>The five gentle questions</span><div class="h-px flex-1 bg-ink-300/20"></div>
+                </div>
+
+                <div class="grid grid-cols-5 gap-3">
+                    <div class="card glass rounded-xl p-5 text-center">
+                        <div class="serif text-3xl number-display mb-2">1</div>
+                        <div class="text-xs text-ink-200 leading-snug">What brought you here today?</div>
+                    </div>
+                    <div class="card glass rounded-xl p-5 text-center">
+                        <div class="serif text-3xl number-display mb-2">2</div>
+                        <div class="text-xs text-ink-200 leading-snug">How long has this been going on?</div>
+                    </div>
+                    <div class="card glass rounded-xl p-5 text-center">
+                        <div class="serif text-3xl number-display mb-2">3</div>
+                        <div class="text-xs text-ink-200 leading-snug">What have you already tried?</div>
+                    </div>
+                    <div class="card glass rounded-xl p-5 text-center">
+                        <div class="serif text-3xl number-display mb-2">4</div>
+                        <div class="text-xs text-ink-200 leading-snug">Is it affecting your daily life?</div>
+                    </div>
+                    <div class="card glass rounded-xl p-5 text-center">
+                        <div class="serif text-3xl number-display mb-2">5</div>
+                        <div class="text-xs text-ink-200 leading-snug">Where are you, and how would you prefer to meet?</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="show('time')" class="bg-moss-600 hover:bg-moss-500 text-cream-50 px-5 py-2 rounded-lg text-sm font-medium transition">See the time returned &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ═══════════ SECTION: TIME RETURNED ═══════════ -->
+            <section id="s-time" class="section">
+                <div class="glass-warm rounded-3xl p-8 mb-6">
+                    <div class="tag bg-saffron-300/10 text-saffron-200 border border-saffron-300/20 mb-4">The honest math</div>
+                    <h2 class="serif text-4xl font-light text-cream-50 leading-tight mb-4">Every hour protected is an hour returned to clinical work, to your family, to yourself.</h2>
+                    <p class="text-ink-200 leading-relaxed max-w-3xl">Move the sliders to reflect your reality. The numbers aren't marketing — they're arithmetic.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-8">
+                    <div class="glass rounded-2xl p-6">
+                        <div class="mb-6">
+                            <div class="flex items-baseline justify-between mb-2">
+                                <div class="text-[10px] uppercase tracking-widest text-ink-300">Inquiries per day</div>
+                                <div class="serif text-3xl text-cream-50" id="vInq">8</div>
+                            </div>
+                            <input type="range" min="1" max="15" value="8" class="slider" id="sInq" oninput="calcTime()"/>
+                            <div class="flex justify-between text-[10px] text-ink-400 mt-1"><span>1</span><span>15</span></div>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline justify-between mb-2">
+                                <div class="text-[10px] uppercase tracking-widest text-ink-300">Minutes per conversation</div>
+                                <div class="serif text-3xl text-cream-50" id="vMin">10</div>
+                            </div>
+                            <input type="range" min="5" max="20" value="10" class="slider" id="sMin" oninput="calcTime()"/>
+                            <div class="flex justify-between text-[10px] text-ink-400 mt-1"><span>5</span><span>20</span></div>
+                        </div>
+                    </div>
+
+                    <div class="glass-warm rounded-2xl p-6 relative overflow-hidden">
+                        <div class="absolute -bottom-10 -right-10 w-48 h-48 rounded-full bg-saffron-300/10 blur-3xl"></div>
+                        <div class="relative z-10">
+                            <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-4">What this costs you right now</div>
+                            <div class="grid grid-cols-3 gap-3 mb-5">
+                                <div>
+                                    <div class="serif text-4xl number-display" id="tDay">1.3</div>
+                                    <div class="text-[10px] text-ink-300 uppercase tracking-wider mt-1">hrs / day</div>
+                                </div>
+                                <div>
+                                    <div class="serif text-4xl number-display" id="tWeek">9.3</div>
+                                    <div class="text-[10px] text-ink-300 uppercase tracking-wider mt-1">hrs / week</div>
+                                </div>
+                                <div>
+                                    <div class="serif text-4xl number-display" id="tMonth">40</div>
+                                    <div class="text-[10px] text-ink-300 uppercase tracking-wider mt-1">hrs / month</div>
+                                </div>
+                            </div>
+                            <div class="divider mb-4"></div>
+                            <div class="text-[10px] uppercase tracking-widest text-moss-300 font-semibold mb-2">That is the equivalent of</div>
+                            <div id="equiv" class="text-sm text-cream-50 leading-relaxed"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-[10px] uppercase tracking-widest text-ink-300 font-semibold mb-4 flex items-center gap-3">
+                    <div class="h-px flex-1 bg-ink-300/20"></div><span>What those hours could become</span><div class="h-px flex-1 bg-ink-300/20"></div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="card glass rounded-2xl p-5">
+                        <div class="text-2xl mb-2 text-saffron-300">&#9775;</div>
+                        <div class="serif text-lg text-cream-50 mb-2">Deeper consultations</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">More time per patient. Better Nadi Pariksha. Richer treatment plans.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5">
+                        <div class="text-2xl mb-2 text-moss-300">&#10047;</div>
+                        <div class="serif text-lg text-cream-50 mb-2">Panchakarma programs</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Space to structure the intensive retreats you've wanted to offer from Monchique.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5">
+                        <div class="text-2xl mb-2 text-saffron-200">&#9835;</div>
+                        <div class="serif text-lg text-cream-50 mb-2">Teaching &amp; workshops</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Foundational Ayurveda courses. A second revenue stream, built on your voice.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5">
+                        <div class="text-2xl mb-2 text-cream-100">&#10086;</div>
+                        <div class="serif text-lg text-cream-50 mb-2">Yourself</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Rest. Study. The things that replenish the person who replenishes everyone else.</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="show('connection')" class="bg-moss-600 hover:bg-moss-500 text-cream-50 px-5 py-2 rounded-lg text-sm font-medium transition">Staying connected &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ═══════════ SECTION: CONNECTION ═══════════ -->
+            <section id="s-connection" class="section">
+                <div class="glass-warm rounded-3xl p-8 mb-6">
+                    <div class="tag bg-moss-400/10 text-moss-200 border border-moss-400/20 mb-4">After the first conversation</div>
+                    <h2 class="serif text-4xl font-light text-cream-50 leading-tight mb-4">The journey doesn't stop at "booked."</h2>
+                    <p class="text-ink-200 leading-relaxed max-w-3xl">The same system that handles the first conversation can quietly stay in touch — continuing the relationship in your voice, at your pace, without adding a single task to your day.</p>
+                </div>
+
+                <div class="glass rounded-3xl p-8 mb-6">
+                    <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-6">A natural rhythm of care</div>
+
+                    <div class="space-y-5">
+                        <div class="flex gap-5 items-start">
+                            <div class="w-24 flex-shrink-0 text-right">
+                                <div class="serif text-xl text-cream-50">Moment 1</div>
+                                <div class="text-[10px] text-ink-300 uppercase tracking-wider">Immediately</div>
+                            </div>
+                            <div class="w-px bg-moss-400/30 self-stretch relative"><div class="absolute -left-1.5 top-1 w-3 h-3 rounded-full bg-moss-300"></div></div>
+                            <div class="flex-1 glass rounded-xl p-4">
+                                <div class="text-sm text-cream-50 font-medium mb-1">Welcome &amp; preparation</div>
+                                <div class="text-xs text-ink-300 leading-relaxed">"Thank you for booking. Here is a short guide on what to expect, and a few gentle things to notice in your body before we meet."</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-5 items-start">
+                            <div class="w-24 flex-shrink-0 text-right">
+                                <div class="serif text-xl text-cream-50">Day 3</div>
+                                <div class="text-[10px] text-ink-300 uppercase tracking-wider">Gentle check-in</div>
+                            </div>
+                            <div class="w-px bg-moss-400/30 self-stretch relative"><div class="absolute -left-1.5 top-1 w-3 h-3 rounded-full bg-saffron-300"></div></div>
+                            <div class="flex-1 glass rounded-xl p-4">
+                                <div class="text-sm text-cream-50 font-medium mb-1">Softly returning</div>
+                                <div class="text-xs text-ink-300 leading-relaxed">"We noticed you read through the guide. Any questions before our session? No pressure &mdash; just here if you need me."</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-5 items-start">
+                            <div class="w-24 flex-shrink-0 text-right">
+                                <div class="serif text-xl text-cream-50">Day 10</div>
+                                <div class="text-[10px] text-ink-300 uppercase tracking-wider">Useful content</div>
+                            </div>
+                            <div class="w-px bg-moss-400/30 self-stretch relative"><div class="absolute -left-1.5 top-1 w-3 h-3 rounded-full bg-saffron-300"></div></div>
+                            <div class="flex-1 glass rounded-xl p-4">
+                                <div class="text-sm text-cream-50 font-medium mb-1">Something relevant to them</div>
+                                <div class="text-xs text-ink-300 leading-relaxed">Tailored to their concern &mdash; a short read on <em>Agni</em> for digestive inquiries, on stress and hormones for women's health, on <em>Kitchiri</em> for caregivers.</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-5 items-start">
+                            <div class="w-24 flex-shrink-0 text-right">
+                                <div class="serif text-xl text-cream-50">Day 21</div>
+                                <div class="text-[10px] text-ink-300 uppercase tracking-wider">An invitation</div>
+                            </div>
+                            <div class="w-px bg-moss-400/30 self-stretch relative"><div class="absolute -left-1.5 top-1 w-3 h-3 rounded-full bg-saffron-300"></div></div>
+                            <div class="flex-1 glass rounded-xl p-4">
+                                <div class="text-sm text-cream-50 font-medium mb-1">A next step, softly offered</div>
+                                <div class="text-xs text-ink-300 leading-relaxed">A workshop, a mini-Panchakarma retreat in Monchique, or simply: "if now feels right, here's the link to book."</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-5 items-start">
+                            <div class="w-24 flex-shrink-0 text-right">
+                                <div class="serif text-xl text-cream-50">Ongoing</div>
+                                <div class="text-[10px] text-ink-300 uppercase tracking-wider">Seasonal</div>
+                            </div>
+                            <div class="w-px bg-moss-400/30 self-stretch relative"><div class="absolute -left-1.5 top-1 w-3 h-3 rounded-full bg-cream-100"></div></div>
+                            <div class="flex-1 glass rounded-xl p-4">
+                                <div class="text-sm text-cream-50 font-medium mb-1">A monthly note from Dr. Veena</div>
+                                <div class="text-xs text-ink-300 leading-relaxed">One email a month. Seasonal wisdom. A recipe. A reminder to slow down. Written once &mdash; read many times &mdash; the practice staying present in their lives.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-5">
+                    <div class="card glass rounded-2xl p-5">
+                        <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-2">Past clients</div>
+                        <div class="serif text-lg text-cream-50 mb-2">Quietly reconnected</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Clients who haven't been seen in 6+ months receive a gentle seasonal check-in &mdash; no pressure, just presence.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5">
+                        <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-2">Community</div>
+                        <div class="serif text-lg text-cream-50 mb-2">A gathering space</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">A private WhatsApp or Telegram group where clients share questions, and you share short audio notes when inspired.</div>
+                    </div>
+                    <div class="card glass rounded-2xl p-5">
+                        <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-2">Booking</div>
+                        <div class="serif text-lg text-cream-50 mb-2">Effortless re-entry</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Returning clients skip the intake. One tap to book. The system remembers.</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="show('voice')" class="bg-moss-600 hover:bg-moss-500 text-cream-50 px-5 py-2 rounded-lg text-sm font-medium transition">Your voice &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ═══════════ SECTION: VOICE ═══════════ -->
+            <section id="s-voice" class="section">
+                <div class="glass-warm rounded-3xl p-8 mb-6">
+                    <div class="tag bg-saffron-300/10 text-saffron-200 border border-saffron-300/20 mb-4">The quiet multiplier</div>
+                    <h2 class="serif text-4xl font-light text-cream-50 leading-tight mb-4">You already know what to say. We just help it travel.</h2>
+                    <p class="text-ink-200 leading-relaxed max-w-3xl">You are not being asked to become a content creator. You are being offered a way for your existing knowledge &mdash; spoken once, casually, the way you already speak &mdash; to reach more people without more effort.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div class="glass rounded-2xl p-6">
+                        <div class="text-[10px] uppercase tracking-widest text-moss-300 font-semibold mb-3">How it works</div>
+                        <h3 class="serif text-2xl text-cream-50 mb-4">Three minutes. One voice note.</h3>
+                        <div class="space-y-4">
+                            <div class="flex gap-4">
+                                <div class="serif text-3xl number-display leading-none w-10">1</div>
+                                <div>
+                                    <div class="text-sm text-cream-50 font-medium mb-1">You speak</div>
+                                    <div class="text-xs text-ink-300 leading-relaxed">Between patients. While driving. After a consultation when something was clear. Just record into your phone.</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="serif text-3xl number-display leading-none w-10">2</div>
+                                <div>
+                                    <div class="text-sm text-cream-50 font-medium mb-1">It is gently shaped</div>
+                                    <div class="text-xs text-ink-300 leading-relaxed">The system cleans it, structures it, and prepares multiple formats &mdash; always in your voice, always for your approval.</div>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="serif text-3xl number-display leading-none w-10">3</div>
+                                <div>
+                                    <div class="text-sm text-cream-50 font-medium mb-1">It travels</div>
+                                    <div class="text-xs text-ink-300 leading-relaxed">A newsletter. A post. A follow-up to the right patients. An FAQ answer the assistant now knows.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-2xl p-6 relative overflow-hidden">
+                        <div class="text-[10px] uppercase tracking-widest text-moss-300 font-semibold mb-3">A real example</div>
+                        <div class="glass-warm rounded-xl p-4 mb-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-full bg-saffron-400/20 flex items-center justify-center">&#127908;</div>
+                                <div class="text-xs text-ink-200">Voice note &mdash; 3 min 42 sec</div>
+                            </div>
+                            <div class="serif text-sm text-cream-50 italic leading-snug">"Why cold water first thing in the morning quietly disrupts your Agni &mdash; and what to do instead."</div>
+                        </div>
+
+                        <div class="text-[10px] uppercase tracking-widest text-ink-300 font-semibold mb-2">That single recording becomes</div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 text-xs text-ink-200 p-2 rounded-lg bg-ink-900/50"><span class="text-saffron-300">&#9993;</span> Newsletter email to your full list</div>
+                            <div class="flex items-center gap-3 text-xs text-ink-200 p-2 rounded-lg bg-ink-900/50"><span class="text-saffron-300">&#9872;</span> A short post for Instagram or blog</div>
+                            <div class="flex items-center gap-3 text-xs text-ink-200 p-2 rounded-lg bg-ink-900/50"><span class="text-saffron-300">&#10070;</span> Follow-up sent to every digestive-concern client</div>
+                            <div class="flex items-center gap-3 text-xs text-ink-200 p-2 rounded-lg bg-ink-900/50"><span class="text-saffron-300">&#9775;</span> A new FAQ answer the assistant now gives</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-6 border-l-2 border-saffron-300/40">
+                    <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-2">The shift</div>
+                    <p class="serif text-xl text-cream-50 font-light italic leading-snug">You speak once. It helps many times. The mother awake at 2am with a sick child. The woman who felt dismissed by her GP. The curious seeker who hasn't yet dared to book. They hear you, even when you are resting.</p>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="show('prototype')" class="bg-moss-600 hover:bg-moss-500 text-cream-50 px-5 py-2 rounded-lg text-sm font-medium transition">Where we'd begin &rarr;</button>
+                </div>
+            </section>
+
+            <!-- ═══════════ SECTION: PROTOTYPE ═══════════ -->
+            <section id="s-prototype" class="section">
+                <div class="glass-warm rounded-3xl p-8 mb-6">
+                    <div class="tag bg-moss-400/10 text-moss-200 border border-moss-400/20 mb-4">Where we'd begin</div>
+                    <h2 class="serif text-4xl font-light text-cream-50 leading-tight mb-4">One small thing, built well. Then everything else follows.</h2>
+                    <p class="text-ink-200 leading-relaxed max-w-3xl">We don't need a platform. We don't need a CRM overhaul. We need a single, gentle, visible proof that this works &mdash; in your voice, at your standard.</p>
+                </div>
+
+                <div class="grid grid-cols-5 gap-6 items-center mb-8">
+                    <div class="col-span-2 flex justify-center">
+                        <div class="phone-frame p-1" style="width:260px;height:520px;">
+                            <div class="w-full h-full rounded-[32px] bg-gradient-to-b from-ink-900 to-ink-950 p-4 overflow-hidden">
+                                <div class="flex items-center gap-2 mb-3 pb-3 border-b border-white/5">
+                                    <div class="lotus" style="width:28px;height:28px;font-size:11px;">S</div>
+                                    <div>
+                                        <div class="text-[11px] text-cream-50 font-medium">Samayur</div>
+                                        <div class="text-[8px] text-moss-300">online</div>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="bubble-bot rounded-2xl rounded-tl-sm p-2.5 max-w-[85%] text-[10px] text-cream-50 leading-snug">Welcome. I'm here to help you find out whether Samayur might be right for you.</div>
+                                    <div class="bubble-user rounded-2xl rounded-tr-sm p-2.5 max-w-[80%] text-[10px] text-cream-50 leading-snug ml-auto">I've had bloating for years, nothing works.</div>
+                                    <div class="bubble-bot rounded-2xl rounded-tl-sm p-2.5 max-w-[85%] text-[10px] text-cream-50 leading-snug">That kind of persistent discomfort often points to something deeper. In Ayurveda, we call the digestive fire <em>Agni</em>...</div>
+                                    <div class="bubble-bot rounded-2xl rounded-tl-sm p-2.5 max-w-[85%] text-[10px] text-cream-50 leading-snug">May I ask a few gentle questions?</div>
+                                    <div class="bubble-user rounded-2xl rounded-tr-sm p-2.5 max-w-[80%] text-[10px] text-cream-50 leading-snug ml-auto">Yes, please.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-3 space-y-4">
+                        <div class="glass rounded-2xl p-6">
+                            <div class="text-[10px] uppercase tracking-widest text-saffron-200 font-semibold mb-3">The first prototype</div>
+                            <h3 class="serif text-3xl text-cream-50 mb-4">A WhatsApp assistant, trained on you.</h3>
+                            <p class="text-sm text-ink-200 leading-relaxed mb-4">One link. Your existing number. No website changes. No new software for your clients to learn. They already use WhatsApp &mdash; so do you.</p>
+                            <p class="text-sm text-ink-200 leading-relaxed">You share the link anywhere: on samayur.com, in your bio, in replies. When someone writes in, the assistant answers in your voice. Within days, you'll see the first real conversations happening &mdash; without you.</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="card glass rounded-xl p-4">
+                                <div class="text-[10px] uppercase tracking-widest text-moss-300 mb-1">Timeline</div>
+                                <div class="serif text-lg text-cream-50">Live in days</div>
+                                <div class="text-xs text-ink-300 mt-1">Not months</div>
+                            </div>
+                            <div class="card glass rounded-xl p-4">
+                                <div class="text-[10px] uppercase tracking-widest text-moss-300 mb-1">Effort from you</div>
+                                <div class="serif text-lg text-cream-50">One review</div>
+                                <div class="text-xs text-ink-300 mt-1">You approve the voice</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-[10px] uppercase tracking-widest text-ink-300 font-semibold mb-4 flex items-center gap-3">
+                    <div class="h-px flex-1 bg-ink-300/20"></div><span>And then, in time</span><div class="h-px flex-1 bg-ink-300/20"></div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-4 mb-8">
+                    <div class="card glass rounded-xl p-4">
+                        <div class="text-[10px] text-saffron-200 font-semibold mb-1">After the pilot</div>
+                        <div class="serif text-lg text-cream-50 mb-1">Web widget</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">The assistant on samayur.com too &mdash; same voice, same intelligence.</div>
+                    </div>
+                    <div class="card glass rounded-xl p-4">
+                        <div class="text-[10px] text-saffron-200 font-semibold mb-1">Month 2</div>
+                        <div class="serif text-lg text-cream-50 mb-1">Dosha quiz</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">A beautiful, interactive lead-capture experience. Gentle entry point.</div>
+                    </div>
+                    <div class="card glass rounded-xl p-4">
+                        <div class="text-[10px] text-saffron-200 font-semibold mb-1">Month 3</div>
+                        <div class="serif text-lg text-cream-50 mb-1">Nurture flows</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">The gentle follow-up system, quietly running.</div>
+                    </div>
+                    <div class="card glass rounded-xl p-4">
+                        <div class="text-[10px] text-saffron-200 font-semibold mb-1">Later</div>
+                        <div class="serif text-lg text-cream-50 mb-1">Voice &amp; content</div>
+                        <div class="text-xs text-ink-300 leading-relaxed">Your voice notes, traveling. Your knowledge, multiplied.</div>
+                    </div>
+                </div>
+
+                <div class="glass-warm rounded-3xl p-8 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-saffron-300/10 blur-3xl drift"></div>
+                    <div class="relative z-10 max-w-3xl">
+                        <div class="tag bg-saffron-300/10 text-saffron-200 border border-saffron-300/20 mb-4">A closing note</div>
+                        <p class="serif text-2xl text-cream-50 font-light leading-snug italic mb-6">"You built Samayur from real depth &mdash; from Gujarat, from years of study, from a kind of patience the modern world has mostly forgotten. What I'm offering is simply a way for that depth to be protected. So that the people who deserve your full presence get it. And the rest are still cared for, just earlier in the journey."</p>
+                        <div class="flex items-center gap-4 pt-6 border-t border-cream-50/10">
+                            <div class="text-xs text-ink-300">Ready to see the first prototype built?</div>
+                            <button class="bg-saffron-400 hover:bg-saffron-300 text-ink-900 px-6 py-2.5 rounded-full text-sm font-semibold transition">Let's begin &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script>
+    // ═════ NAVIGATION ═════
+    const titles = {
+        welcome: ['A Quiet Welcome', 'A demonstration prepared with care, for you'],
+        understanding: ['Your Practice', 'What we understood before designing anything'],
+        assistant: ['The Assistant', 'Try it as a new client would'],
+        qualification: ['Smart Filtering', 'Who reaches you &mdash; and who doesn\'t yet'],
+        time: ['Time Returned', 'The honest math of what this protects'],
+        connection: ['Staying Connected', 'After the first conversation'],
+        voice: ['Your Voice, Multiplied', 'Spoken once &mdash; traveling further'],
+        prototype: ['Where We\'d Begin', 'The simplest first prototype']
+    };
+    function show(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById('s-'+id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelector('[data-s="'+id+'"]').classList.add('active');
+        document.getElementById('stitle').innerHTML = titles[id][0];
+        document.getElementById('ssub').innerHTML = titles[id][1];
+        window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    // ═════ TIME CALCULATOR ═════
+    function calcTime() {
+        const inq = +document.getElementById('sInq').value;
+        const min = +document.getElementById('sMin').value;
+        document.getElementById('vInq').textContent = inq;
+        document.getElementById('vMin').textContent = min;
+        const dayH = (inq * min) / 60;
+        const weekH = dayH * 7;
+        const monthH = weekH * 4.33;
+        document.getElementById('tDay').textContent = dayH.toFixed(1);
+        document.getElementById('tWeek').textContent = weekH.toFixed(1);
+        document.getElementById('tMonth').textContent = Math.round(monthH);
+        const fullDays = Math.round(monthH / 8);
+        const consultations = Math.round(monthH / 1);
+        document.getElementById('equiv').innerHTML =
+            '<span class="text-cream-50 font-medium">' + fullDays + ' full working days per month</span> &mdash; or <span class="text-cream-50 font-medium">' + consultations + ' additional deep consultations</span> with the patients who need you most.';
+        document.getElementById('sInq').style.setProperty('--v', ((inq-1)/14*100)+'%');
+        document.getElementById('sMin').style.setProperty('--v', ((min-5)/15*100)+'%');
+    }
+
+    // ═════ CHAT ═════
+    const chatBody = document.getElementById('chatBody');
+    const chipsEl = document.getElementById('chips');
+    let chatState = { step: 0, segment: null, duration: null, tried: null, location: null };
+
+    const initialChips = [
+        { t: "I've had bloating and reflux for years", k: 'digestive' },
+        { t: "I keep getting ovarian cysts", k: 'women' },
+        { t: "My child has a recurring cough", k: 'parent' },
+        { t: "I'm curious about Ayurveda", k: 'seeker' },
+        { t: "How much does a consultation cost?", k: 'price' }
+    ];
+
+    function addBot(html, delay=700) {
+        return new Promise(res => {
+            const typing = document.createElement('div');
+            typing.className = 'flex items-start gap-2 fade-up';
+            typing.innerHTML = '<div class="lotus" style="width:28px;height:28px;font-size:11px;flex-shrink:0;">S</div><div class="bubble-bot rounded-2xl rounded-tl-sm px-4 py-2.5"><div class="typing"><span></span><span></span><span></span></div></div>';
+            chatBody.appendChild(typing);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            setTimeout(() => {
+                typing.querySelector('.bubble-bot').innerHTML = '<div class="text-sm text-cream-50 leading-relaxed">'+html+'</div>';
+                chatBody.scrollTop = chatBody.scrollHeight;
+                res();
+            }, delay);
+        });
+    }
+    function addUser(text) {
+        const el = document.createElement('div');
+        el.className = 'flex justify-end fade-up';
+        el.innerHTML = '<div class="bubble-user rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%]"><div class="text-sm text-cream-50 leading-relaxed">'+text+'</div></div>';
+        chatBody.appendChild(el);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+    function setChips(list) {
+        chipsEl.innerHTML = '';
+        list.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'prompt-chip text-xs text-ink-200 bg-ink-900/60 border border-white/10 rounded-full px-3 py-1.5';
+            btn.textContent = c.t;
+            btn.onclick = () => handleInput(c.t, c.k);
+            chipsEl.appendChild(btn);
+        });
+    }
+
+    async function handleInput(text, keyOverride=null) {
+        addUser(text);
+        const key = keyOverride || detectKey(text);
+        chipsEl.innerHTML = '';
+
+        if (chatState.step === 0) {
+            chatState.segment = key;
+            await routeSegment(key);
+            chatState.step = 1;
+            setChips([
+                { t: 'About 3 years now', k: 'dur-long' },
+                { t: 'A few months', k: 'dur-mid' },
+                { t: 'Just started recently', k: 'dur-short' }
+            ]);
+        } else if (chatState.step === 1) {
+            chatState.duration = key;
+            await addBot("Thank you for sharing that. " + (key==='dur-long' ? "When something has been present for that long, it usually means the imbalance has layers to it &mdash; which is exactly where Ayurveda tends to be most useful." : key==='dur-mid' ? "That's actually a wonderful window &mdash; soon enough to address at the root, before the pattern becomes deeply set." : "Catching something early is a gift. Ayurveda is as much about prevention as it is about healing."));
+            await addBot("May I ask &mdash; have you tried other approaches? Medical, dietary, or otherwise?", 900);
+            chatState.step = 2;
+            setChips([
+                { t: "Yes, medications mainly", k: 'tried-meds' },
+                { t: "Some diet changes", k: 'tried-diet' },
+                { t: "Nothing yet", k: 'tried-none' }
+            ]);
+        } else if (chatState.step === 2) {
+            chatState.tried = key;
+            await addBot(key==='tried-meds' ? "Understood. Medications often manage symptoms beautifully but can leave the root untouched. That's usually what brings people to Dr. Veena." : key==='tried-diet' ? "It's thoughtful that you've already begun there &mdash; food is where Ayurveda always begins too. We simply take it deeper, into your individual constitution." : "No shame in that &mdash; in Ayurveda, the first step is always understanding, not acting. You're exactly where you should be.");
+            await addBot("One last question &mdash; are you based in Portugal, or open to an online consultation?", 900);
+            chatState.step = 3;
+            setChips([
+                { t: "I'm in Lisbon", k: 'loc-lisbon' },
+                { t: "Algarve region", k: 'loc-algarve' },
+                { t: "Online would be easier", k: 'loc-online' }
+            ]);
+        } else if (chatState.step === 3) {
+            chatState.location = key;
+            const locMap = { 'loc-lisbon': 'Lisbon (BeHaus)', 'loc-algarve': 'Portim&atilde;o or Almancil', 'loc-online': 'online' };
+            await addBot("Perfect. Dr. Veena sees clients in " + locMap[key] + ", so that will work beautifully.");
+            await addBot("Based on what you've shared, your situation sounds well-suited to the kind of work she does. A first consultation is a full medical evaluation &mdash; she uses Nadi Pariksha (pulse diagnosis) alongside a detailed conversation about your history, constitution, and current imbalances. It typically lasts about an hour.", 1100);
+            await addBot("Would you like me to share the booking link? Or is there anything you'd like to ask first?", 900);
+            chatState.step = 4;
+            setChips([
+                { t: "Yes, please send the booking link", k: 'book' },
+                { t: "What does it cost?", k: 'price' },
+                { t: "What should I prepare?", k: 'prepare' }
+            ]);
+            updateLeadCard();
+        } else if (chatState.step === 4) {
+            if (key === 'book' || text.toLowerCase().includes('book') || text.toLowerCase().includes('yes')) {
+                await addBot("Wonderful. Here is the direct link: <span class='text-saffron-300 underline'>samayur.com/book</span>");
+                await addBot("Before you go &mdash; may I send you a short guide on what to expect from your first Ayurvedic consultation? It helps you feel prepared and get the most from the time with Dr. Veena.", 1000);
+                await addBot("You're in excellent hands. Looking forward to you meeting her.", 900);
+                updateLeadCard(true);
+                setChips([{ t: 'Restart the demo', k: 'reset' }]);
+            } else if (key === 'price' || text.toLowerCase().includes('cost') || text.toLowerCase().includes('price')) {
+                await addBot("The first consultation with Dr. Veena is &euro;120 and lasts approximately one hour. Follow-up consultations are &euro;80. Specific treatment programs &mdash; like Panchakarma &mdash; are quoted individually after the first session, because they are designed entirely around your needs.");
+                setChips([{ t: "I'd like to book", k: 'book' }, { t: "Tell me more about treatments", k: 'treatments' }]);
+            } else if (key === 'prepare' || text.toLowerCase().includes('prepare')) {
+                await addBot("A few gentle things: note your typical daily meals, any medications you take, and how your digestion, sleep, and energy have been in the past weeks. Dr. Veena will guide you through the rest.");
+                setChips([{ t: "I'd like to book", k: 'book' }]);
+            } else {
+                await addBot("I'll make sure Dr. Veena sees your message. Would you like the booking link in the meantime, so the slot is reserved for you?");
+                setChips([{ t: "Yes, please", k: 'book' }]);
+            }
+        }
+    }
+
+    function detectKey(text) {
+        const t = text.toLowerCase();
+        if (t.match(/bloat|reflux|heartburn|digest|acid|stomach|gut|gas/)) return 'digestive';
+        if (t.match(/cyst|candid|period|menstr|hormon|women|pcos|uti/)) return 'women';
+        if (t.match(/child|kid|baby|son|daughter|fever|cough/)) return 'parent';
+        if (t.match(/dosha|vata|pitta|kapha|philosoph|ayurveda|five element|curious|learn/)) return 'seeker';
+        if (t.match(/cost|price|how much|pay|fee|euro/)) return 'price';
+        if (t.match(/book|appointment|schedul/)) return 'book';
+        return 'seeker';
+    }
+
+    async function routeSegment(key) {
+        if (key === 'digestive') {
+            await addBot("That kind of persistent discomfort &mdash; especially when nothing has helped long-term &mdash; often points to something deeper that hasn't been addressed.");
+            await addBot("In Ayurveda, digestion is central to everything. We call the digestive fire <em>Agni</em>, and when it's disrupted, it shows up exactly the way you're describing.", 1000);
+            await addBot("May I ask &mdash; how long has this been going on?", 900);
+        } else if (key === 'women') {
+            await addBot("I'm sorry you're dealing with this. Many women who come to Dr. Veena feel their concerns haven't been fully heard &mdash; and that the root cause is rarely addressed.");
+            await addBot("In Ayurveda, these patterns are understood through the lens of accumulated heat, stress, and digestive imbalance &mdash; all treatable at the root.", 1000);
+            await addBot("How long have you been dealing with this?", 900);
+        } else if (key === 'parent') {
+            await addBot("I can imagine how concerning that is. With children, Ayurveda has very gentle and time-tested approaches &mdash; especially for recurring issues that conventional treatment keeps returning to.");
+            await addBot("Dr. Veena works with children carefully, always alongside your pediatrician, not in place of them.", 1000);
+            await addBot("How long has this been recurring?", 900);
+        } else if (key === 'seeker') {
+            await addBot("That's a beautiful starting point. Ayurveda is a 5,000-year-old medical system &mdash; the word itself means <em>the science of life</em>. It begins not with symptoms, but with who you are.");
+            await addBot("Dr. Veena trained at Gujarat Ayurved University in India, so the depth of her work is genuinely medical &mdash; not just lifestyle coaching.", 1000);
+            await addBot("Is there a particular area of your health you'd like to understand better?", 900);
+        } else if (key === 'price') {
+            await addBot("A first consultation with Dr. Veena is &euro;120 and lasts approximately an hour. It's a full medical evaluation &mdash; she uses Nadi Pariksha (pulse diagnosis) alongside a detailed conversation about your history.");
+            await addBot("Many people find that single session already gives them more clarity than years of searching.", 1000);
+            await addBot("Is there a specific concern bringing you here?", 900);
+        }
+    }
+
+    function updateLeadCard(booked=false) {
+        const card = document.getElementById('leadCard');
+        const dot = document.getElementById('leadDot');
+        const status = document.getElementById('leadStatus');
+        const content = document.getElementById('leadContent');
+        card.classList.remove('opacity-40');
+        dot.className = 'w-2 h-2 rounded-full ' + (booked ? 'bg-moss-300 pulse-dot' : 'bg-saffron-300 pulse-dot');
+        status.textContent = booked ? 'Consultation booked' : 'Qualified lead — ready to review';
+
+        const segMap = {
+            digestive: 'Digestive &amp; Metabolic',
+            women: "Women's Health",
+            parent: 'Parent / Caregiver',
+            seeker: 'Holistic Seeker',
+            price: 'Information Seeker'
+        };
+        const durMap = { 'dur-long': '3+ years', 'dur-mid': 'Several months', 'dur-short': 'Recent onset' };
+        const triedMap = { 'tried-meds': 'Medications (long-term)', 'tried-diet': 'Dietary changes', 'tried-none': 'Nothing yet' };
+        const locMap = { 'loc-lisbon': 'Lisbon &mdash; BeHaus', 'loc-algarve': 'Algarve', 'loc-online': 'Online preferred' };
+
+        content.innerHTML =
+            '<div class="space-y-2.5 text-xs">' +
+            '<div><div class="text-ink-400 text-[10px] uppercase tracking-wider">Segment</div><div class="text-cream-50 font-medium">' + (segMap[chatState.segment]||'&mdash;') + '</div></div>' +
+            '<div><div class="text-ink-400 text-[10px] uppercase tracking-wider">Duration</div><div class="text-cream-50">' + (durMap[chatState.duration]||'&mdash;') + '</div></div>' +
+            '<div><div class="text-ink-400 text-[10px] uppercase tracking-wider">Tried</div><div class="text-cream-50">' + (triedMap[chatState.tried]||'&mdash;') + '</div></div>' +
+            '<div><div class="text-ink-400 text-[10px] uppercase tracking-wider">Location</div><div class="text-cream-50">' + (locMap[chatState.location]||'&mdash;') + '</div></div>' +
+            '<div class="pt-2 mt-2 border-t border-white/5"><div class="text-ink-400 text-[10px] uppercase tracking-wider">Readiness</div><div class="text-moss-300 font-semibold">' + (booked ? 'Booked &mdash; prepare notes before session' : 'High &mdash; ready to book') + '</div></div>' +
+            '</div>';
+    }
+
+    function sendUser() {
+        const input = document.getElementById('chatInput');
+        const val = input.value.trim();
+        if (!val) return;
+        input.value = '';
+        handleInput(val);
+    }
+    document.getElementById('chatInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendUser();
+    });
+
+    async function resetChat() {
+        chatBody.innerHTML = '';
+        chatState = { step: 0, segment: null, duration: null, tried: null, location: null };
+        document.getElementById('leadCard').classList.add('opacity-40');
+        document.getElementById('leadDot').className = 'w-2 h-2 rounded-full bg-ink-400';
+        document.getElementById('leadStatus').textContent = 'Awaiting conversation';
+        document.getElementById('leadContent').innerHTML = '<div class="text-xs text-ink-400 italic">Start or complete the chat to see the summary the assistant would send you.</div>';
+        await addBot("Welcome. I'm here to help you find out whether Samayur might be the right place for what you're going through.");
+        await addBot("There's no rush. Tell me a little about what brought you today &mdash; a health concern, a question, or simply curiosity. I'll do my best to help.", 1100);
+        setChips(initialChips);
+    }
+
+    // Initialize on load
+    window.addEventListener('load', () => {
+        calcTime();
+        resetChat();
+    });
+</script>
+
+</body>
+</html>
+
